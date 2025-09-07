@@ -1,0 +1,47 @@
+# SPRINT Inference Configuration
+# Example configuration file for inference runs
+
+# Model settings
+model_name: "roberta-base"
+test_dataset: "toy" # "qnli"
+batch_size: 1
+n_samples: 2
+
+
+# Device configuration (list of devices for multi-process)
+devices: ["cuda:0", "cuda:0"]
+#devices: ["cpu", "cpu"]
+# devices: ["cuda:0", "cuda:1"] in the same machine. If different machines then ["cuda:0", "cuda:0"]
+
+# Model configuration overrides
+hidden_act: "bolt_gelu"
+softmax: "softmax_max"
+cap: 50.0
+lora_type: "falora"
+target_modules: ["query", "key", "value", "dense"]
+lora_rank: 16
+lora_alpha: 16
+modules_to_save: ["classifier"]
+
+# Execution settings
+encrypted: true
+clear_embedding: true
+clear_non_trainable: true
+verbose: true
+world_size: 2
+debug: true
+profile: true
+multiprocess: false
+
+
+# Paths
+home_path: "/home/ubuntu"
+src_path: "/home/ubuntu/aws-launcher-tmp"
+data_path: "/home/ubuntu/aws-launcher-tmp/data"
+
+
+
+model_config: "crypten_inference_config.yaml"
+
+
+

@@ -1,0 +1,38 @@
+# SPRINT Inference Configuration
+# Example configuration file for inference runs
+
+# Model settings
+model_name: "roberta-base_adam_bc_falora_r16_a16_kaiming_uniform_bolt_gelu_softmax__sst2"
+test_dataset: "sst2" # "qnli"
+batch_size: 2
+n_samples: 2
+
+# Device configuration (list of devices for multi-process)
+devices: ["cpu"]
+# devices: ["cuda:0", "cuda:1"] in the same machine. If different machines then ["cuda:0", "cuda:0"]
+
+# Model configuration overrides
+hidden_act: "bolt_gelu"
+softmax: "softmax"
+cap: 50.0
+lora_type: "falora"
+lora_init_method: "normal"
+lora_layers: ["query", "key", "value", "dense"]
+lora_rank: 16
+lora_alpha: 16
+
+# Execution settings
+encrypted: true
+clear_embedding: true
+clear_non_trainable: true
+verbose: true
+world_size: 2
+debug: true
+profile: true
+multiprocess: true
+
+
+model_config: "crypten_inference_config.yaml"
+
+
+

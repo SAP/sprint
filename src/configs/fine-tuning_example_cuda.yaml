@@ -1,0 +1,42 @@
+dataset_name: "sst2"
+
+batch_sizes : [2048] # [512, 1024, 2048]
+clipping_thresholds : [1.0] # [0.1, 1.0, 10] 
+lora_types : ['fa_lora'] # ['lora', "none"] 
+schedulers : ['exponential']
+optimizers : ['adam_bc'] # ['adamw', "sgd"]
+hidden_acts : ["bolt_gelu"] #"gelu" 
+microbatch_size : 32
+pretrained_model : "roberta-base"
+target_modules : [
+        ['query', 'key', 'value', 'dense'],
+        #['query', 'value', 'dense'],
+        #['query', 'key', 'value', 'attention.output.dense'],
+        #['query', 'value', 'attention.output.dense'],
+        #['query', 'key', 'value'],
+    ]
+    
+modules_to_save : [
+        ['classifier']
+]
+weight_decay : [0.001] #[0.00, 0.01, 0.001] # 1, 0.0] #[0.0, 0.01]
+save_best_model: True
+random_seed_for_training: False
+training_seed: null
+init_seed: 0
+epochs: 10
+epsilon: 8.0
+delta: 1e-6
+subsampling_type: "poisson" # "shuffle"
+init_seeds: [0]
+cap_thresholds: [None, 50] # [None, 50, 10]
+
+
+
+exponential_scheduler_gammas: [1] #, 0.95]
+learning_rates: [5e-4] # []
+lora_ranks: [16] # [16, 32]
+lora_alphas: [1, 2] 
+lora_init: ["kaiming_uniform"] # ["normal", "orthogonal"]
+softmaxes: ["softmax"] # ["softmax_max", "softmax_nn"]
+device: "cuda:0"
