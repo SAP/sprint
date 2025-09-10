@@ -1,58 +1,43 @@
-# SPRINT Core - Fine-tuning Module
+# SPRINT Core
 
-This folder contains code for SPRINT fine-tuning
+Core components for SPRINT fine-tuning and inference.
 
 ## Structure
 
 ```
 sprint_core/
-├── __init__.py                 # Package initialization and exports
-├── constants.py               # Constants and default configurations
-├── config_manager.py          # Configuration loading and validation
-├── data_loaders.py           # Data loading utilities and factories
-├── model_factory.py          # Model creation and configuration
-├── training_manager.py       # Training process management
-└── experiment_runner.py      # Multi-experiment orchestration
+├── __init__.py                 # Package initialization
+├── constants.py               # Constants and defaults
+├── config_manager.py          # Config loading and validation
+├── data_loaders.py           # Data loading utilities
+├── model_factory.py          # Model creation
+├── training_manager.py       # Training execution
+├── experiment_runner.py      # Multi-experiment orchestration
+├── eval_utils.py             # Evaluation utilities
+├── inference_config.py       # Inference configuration
+├── inference_manager.py      # Inference execution
+├── multiprocess_launcher.py  # Multi-process utilities
+└── README.md                 # Documentation
 ```
 
-## Key Components
+## Components
 
-### Constants (`constants.py`)
-- Dataset configurations (labels per dataset)
-- Supported model types
-- Default paths for data and models
-- Default LoRA and training parameters
+**constants.py** - Dataset configs, model types, default paths and LoRA parameters
 
-### Configuration Manager (`config_manager.py`)
-- `TrainingConfig` dataclass for type-safe configuration
-- `ConfigManager` class for loading and validating YAML configs
-- Comprehensive error handling and validation
+**config_manager.py** - `TrainingConfig` dataclass and `ConfigManager` for YAML loading
 
-### Data Loaders (`data_loaders.py`)
-- `DataLoaderFactory` with methods for different loader types:
-  - Poisson subsampling for differential privacy
-  - Standard shuffling loaders
-  - Validation loaders
-- Custom collate functions for proper batching
+**data_loaders.py** - `DataLoaderFactory` with Poisson subsampling, shuffling, and validation loaders
 
-### Model Factory (`model_factory.py`)
-- `ModelFactory` for creating models and configurations:
-  - CrypTen configuration creation
-  - LoRA configuration setup
-  - Model instantiation and device placement
-  - LoRA application logic
+**model_factory.py** - `ModelFactory` for CrypTen configs, LoRA setup, and model instantiation
 
-### Training Manager (`training_manager.py`)
-- `TrainingManager` class that handles:
-  - Privacy engine setup and configuration
-  - Optimizer and scheduler initialization
-  - Training loop execution
-  - Validation and model saving
-  - NaN detection and error handling
+**training_manager.py** - `TrainingManager` handles privacy engine, training loop, validation, and saving
 
-### Experiment Runner (`experiment_runner.py`)
-- `ExperimentRunner` for orchestrating multiple experiments:
-  - Hyperparameter combination generation
-  - Experiment deduplication
-  - Result saving and management
-  - Error handling and recovery
+**experiment_runner.py** - `ExperimentRunner` orchestrates multiple experiments with hyperparameter combinations
+
+**eval_utils.py** - Model evaluation functions and metrics
+
+**inference_config.py** - Inference configuration classes and validation
+
+**inference_manager.py** - `InferenceManager` for model loading, batch processing, and result collection
+
+**multiprocess_launcher.py** - Multi-process execution for MPC inference
