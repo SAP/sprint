@@ -42,7 +42,7 @@ The repository is organized as follows:
     - `activations/`: Custom activation functions for MPC.
     - `optimizers/`: DP-specific optimizers (e.g., DP-AdamBC).
   - `aws/`: Contains the refactored scripts for running MPC experiments on AWS.
-   - `aws_launcher_refactored.py`: Modified AWS instance launcher from crypten.
+   - `aws_launcher.py`: Modified AWS instance launcher from CrypTen.
    - `aws_mpc_inference.sh`: Script for running MPC inference on AWS.
 - `data/`: Contains the datasets and models.
   - `models/`: Contains the fine-tuned models.
@@ -50,9 +50,7 @@ The repository is organized as follows:
   - `inference/`: Contains the results of the MPC inference.
     - `accuracy/`: Inference accuracy results (for each dataset, encrypted and not-encrypted inference).
     - `runtime/`: Runtime and communication profiling results (from aws experiments)
-- `aws/`: Contains the refactored scripts for running MPC experiments on AWS.
-  - `run_mpc_experiments.py`: Main AWS MPC experiment runner.
-  - `aws_launcher_refactored.py`: Improved AWS instance launcher.
+
 
 ## Requirements and Setup
 - **Python Version**: Tested with Python 3.8.17
