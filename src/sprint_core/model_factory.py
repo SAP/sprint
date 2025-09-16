@@ -1,3 +1,6 @@
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """Model creation and configuration utilities."""
 
 import torch

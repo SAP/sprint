@@ -1,3 +1,6 @@
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Tokenize test and train datasets for MRPC dataset and save them as pickle files
 Uses bert-base-uncased tokenizer with max_length of 128 taken from the BERT paper

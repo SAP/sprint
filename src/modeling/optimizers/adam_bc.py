@@ -1,3 +1,10 @@
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Code adapted from https://github.com/ubc-systopia/DP-AdamBC/blob/main/pytorch_implementation/adam_corr.py
+# Original code had no explicit license - used under fair use for research purposes
+
+
 import os.path
 import numpy
 import torch

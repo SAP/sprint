@@ -1,3 +1,6 @@
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Code adapted from: https://github.com/microsoft/LoRA/blob/main/loralib/utils.py
 """
