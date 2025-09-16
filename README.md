@@ -140,7 +140,7 @@ This artifact does not intentionally disable security mechanisms or run vulnerab
 **Recommendation**: Users should not deploy this code in production or on sensitive data without further security review and hardening.
 
 
-## Notes on Reusability (Encouraged for all badges)
+## Notes on Reusability
 The scope of this repository is to create a general framework that integrates differential privacy (DP) fine-tuning and multi-party computation (MPC) inference for transformer-based models. The overall goal is not only to reproduce our research results but to foster future research and development in privacy-preserving machine learning by providing a modular, extensible foundation.
 
 Here we list some examples of how this artifact can be adapted and extended:
