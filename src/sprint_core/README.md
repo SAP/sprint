@@ -1,3 +1,7 @@
+<!-- 
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
+-->
 # SPRINT Core
 
 Core components for SPRINT fine-tuning and inference.

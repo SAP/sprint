@@ -1,7 +1,8 @@
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
 """SPRINT fine-tuning package."""
 
 from .sprint_core import *
-from .ghost_finetuning_function import ghost_finetune_bert
 
 __all__ = [
     'ConfigManager',
@@ -10,7 +11,6 @@ __all__ = [
     'ModelFactory',
     'TrainingManager',
     'ExperimentRunner',
-    'ghost_finetune_bert',
     'LABELS_PER_DATASET',
     'SUPPORTED_MODEL_TYPES',
     'DEFAULT_LORA_CONFIG',

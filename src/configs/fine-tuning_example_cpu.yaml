@@ -1,3 +1,6 @@
+# Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
+# SPDX-License-Identifier: Apache-2.0
+
 dataset_name: "sst2"
 
 batch_sizes : [2048] # [512, 1024, 2048]

@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-
+# 
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
+# Code adapted and modified from Crypten (https://github.com/facebookresearch/CrypTen)
+#
+# SPDX-License-Identifier: MIT
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# LICENSE file in the root directory of this source tree (https://github.com/facebookresearch/CrypTen/blob/main/LICENSE)
+
+
 """
 This file is a tool to run MPC distributed training over AWS.
 

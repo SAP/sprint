@@ -24,3 +24,5 @@ data/sequential_inference.log
 
 **/best_stats_*.json
 **/best_stats_*_*.json
+
+**.DS_Store
