@@ -211,6 +211,6 @@ However, the following files are licensed under the MIT License as follows:
 - src/aws/aws_launcher.py
 - src/sprint_core/multiprocess_launcher.py
 
-You can find the full text of the MIT License in the file https://github.com/facebookresearch/CrypTen/blob/main/LICENSE
+You can find the full text of the MIT License in the file LICENSES/MIT.txt.
 
 The included MIT-licensed files retain their original copyright and license notices.
