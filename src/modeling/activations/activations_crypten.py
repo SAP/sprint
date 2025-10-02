@@ -51,8 +51,10 @@ class Softmax_NN(cnn.Module):
         self.relu = cnn.ReLU()
         self.lin2 = cnn.Linear(hidden_size, input_size)
 
-
-        abs_path = f"{os.path.expanduser('~')}/sprint/data/models/ma_bert_softmax_weights.pt"
+        base_path = os.getenv('SPRINT_PATH')
+        if base_path is None:
+            base_path = os.path.expanduser('~') + '/sprint'
+        abs_path = f"{base_path}/data/models/ma_bert_softmax_weights.pt"
 
         try:
             self.load_state_dict(torch.load("ma_bert_softmax_weights.pt"), strict=False)

@@ -121,14 +121,16 @@ After cloning the repository, you can follow the manual setup instructions below
 ```
 This will download the dataset and save it in the `data` folder. The tokenized dataset will be saved in `$SPRINT_PATH/data/tokenized_dataset/roberta/sst2/`.
 
-2. Configure the fine-tuning parameters in `$SPRINT_PATH/src/config/fine-tuning_example_cuda.yaml` (or create your own config file). 
+2. Configure the fine-tuning parameters in `$SPRINT_PATH/src/config/fine-tuning_example_cpu.yaml` (or create your own config file). 
 
 3. Run the fine-tuning script (using the absolute path to the config file):
 ```bash
    cd src
-   python run_dp_finetuning.py --config fine-tuning_example_cuda.yaml
+   python run_dp_finetuning.py --config fine-tuning_example_cpu.yaml
 ```
-   The fine-tuned model will be saved in the `$SPRINT_PATH/data/models/` folder. The results (loss, validation accuracy) will be saved in the `$SPRINT_PATH/data/finetuning/` folder.
+The config file `$SPRINT_PATH/src/configs/fine-tuning_example_cpu.yaml` uses the CPU for fine-tuning. If you have a GPU with CUDA support, you can use the config file `$SPRINT_PATH/src/configs/fine-tuning_example_cuda.yaml` (or create your own config file). 
+
+The fine-tuned model will be saved in the `$SPRINT_PATH/data/models/` folder. The results (loss, validation accuracy) will be saved in the `$SPRINT_PATH/data/finetuning/` folder.
 
 ## Run Inference
 The inference can run in cleartext or in MPC. The cleartext mode is used for local evaluation and debugging, while the MPC mode is used for secure inference. The MPC inference can be run locally on two different processes (to evaluate MPC accuracy) or on AWS with multiple machines (to evaluate the communication and overhead).

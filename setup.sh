@@ -48,12 +48,27 @@ detect_os() {
 install_python() {
     print_status "Installing Python 3.9..."
     
+        # check if sudo is available (e.g., not available in some docker containers)
     if [[ "$OS" == "linux" ]]; then
+        if command -v sudo &> /dev/null; then
+        # Check if we are root
+            if [[ $EUID -eq 0 ]]; then
+                SUDO_CMD=""
+            else
+                SUDO_CMD="sudo"
+            fi
+        else
+            SUDO_CMD=""
+        fi
+
         # Focus on apt for Linux
         if command -v apt-get &> /dev/null; then
             print_status "Installing Python 3.9 via apt..."
-            sudo apt-get update
-            sudo apt-get install -y python3.9 python3.9-venv python3.9-dev python3.9-distutils
+            ${SUDO_CMD} apt-get update
+            ${SUDO_CMD} apt-get install -y software-properties-common
+            ${SUDO_CMD} add-apt-repository ppa:deadsnakes/ppa
+            ${SUDO_CMD} apt-get update
+            ${SUDO_CMD} apt-get install -y python3.9 python3.9-venv python3.9-dev python3.9-distutils
             PYTHON_CMD="python3.9"
         else
             print_error "This script requires apt package manager (Ubuntu/Debian)"

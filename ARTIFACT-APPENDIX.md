@@ -46,7 +46,7 @@ https://github.com/SAP/sprint
 
 ### Set up the environment
 
-- **Python Version**: Tested with Python 3.8.17 (The setup script installs this version if not present)
+- **Python Version**: Tested with Python 3.9.23 (The setup script installs this version if not present)
 - **Hardware**: All experiments can be run on CPU, but GPU with CUDA support is recommended for larger models and datasets
 - **Operating System**: Tested on macOS and Linux.
 
@@ -77,14 +77,14 @@ The repository includes a `setup.sh` script that automates the environment setup
 
 Alternatively, a **manual setup process** is provided below: 
 
-2. Install python version 3.8 (e.g. in linux via apt)
+2. Install python version 3.9 (e.g. in linux via apt)
 ```bash
-   sudo apt-get install python3.8 python3.8-venv python3.8-dev
+   sudo apt-get install python3.9 python3.9-venv python3.9-dev
 ```
 
 3. Setup and activate a virtual environment
 ```bash
-   python3.8 -m venv sprint_env
+   python3.9 -m venv sprint_env
    source sprint_env/bin/activate
 ```
 
@@ -96,7 +96,7 @@ Alternatively, a **manual setup process** is provided below:
 *NOTE: `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file (i.e., replacing `sklearn` with `scikit-learn`).*
 
 5. **Modify `autograd_grad_sample.py` in the `private_transformers library`**:
-   - The expected path with the virtual environment is `sprint_env/lib/python3.8/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
+   - The expected path with the virtual environment is `sprint_env/lib/python3.9/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
    - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
 
    
@@ -110,27 +110,31 @@ Alternatively, a **manual setup process** is provided below:
 
 To verify that everything is set up correctly:
 
-
-1. **Test Data Loading**: Download and tokenize a dataset:
+1. **Swith to the `src` folder**
 ```bash
    cd src
+```
+
+2. **Test Data Loading**: Download and tokenize a dataset:
+```bash
    python tokenize_dataset.py --dataset sst2 --model_type roberta
 ```
    This should create tokenized data in `$SPRINT_PATH/data/tokenized_dataset/roberta/sst2/`.
 
-2. **Test DP Fine-tuning**: Run a small fine-tuning experiment:
+3. **Test DP Fine-tuning**: Run a small fine-tuning experiment:
 ```bash
-   cd src
-   python run_dp_finetuning.py --config fine-tuning_example_cuda.yaml
+   python run_dp_finetuning.py --config fine-tuning_example_cpu.yaml
 ```
-This verifies the DP training pipeline is working correctly.
+This verifies the DP training pipeline is working correctly. The config file `$SPRINT_PATH/src/configs/fine-tuning_example_cpu.yaml` uses the CPU for fine-tuning. If you have a GPU with CUDA support, you can use the config file `$SPRINT_PATH/src/configs/fine-tuning_example_cuda.yaml`.
 
-3. **Test Inference**: Ensure you can load a configuration file and run inference:
+*Note: the fine-tuning process may take some time, depending on the dataset size and model complexity.*
+
+4. **Test Inference**: Run inference with CrypTen:
    
 ```bash
-cd src
 python run_inference.py --config inference_example.yaml --crypten_config crypten_inference_config.yaml
 ```
+
 *Note: this examples works with a non fine-tuned roberta-base model. The model_name can be replaced with the name of a fine-tuned model.*
 
 For more details, see the [README](README.md) in the repository.
