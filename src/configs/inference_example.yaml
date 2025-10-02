@@ -34,7 +34,4 @@ profile: true
 multiprocess: true
 
 
-model_config: "crypten_inference_config.yaml"
-
-
 

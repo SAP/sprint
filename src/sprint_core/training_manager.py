@@ -13,7 +13,7 @@ from typing import Dict, Any, Optional, Tuple
 from transformers.optimization import get_linear_schedule_with_warmup
 from private_transformers import PrivacyEngine
 from modeling.optimizers.adam_bc import AdamCorr
-from .constants import SAVED_MODELS_PATH
+from .constants import MODELS_PATH
 
 
 class TrainingManager:
@@ -245,7 +245,7 @@ class TrainingManager:
         eval_params: Dict[str, Any]
     ) -> str:
         """Save the best model."""
-        model_path = f"{SAVED_MODELS_PATH}/{model_name}"
+        model_path = os.path.join(MODELS_PATH, model_name)
         # Check if the path exists, otherwise create it
         os.makedirs(os.path.dirname(model_path), exist_ok=True)
 

@@ -258,7 +258,7 @@ def get_tokenized_data(
                 try:
                     home_path = os.getenv("HOME")
 
-                    dataset = datasets.load_from_disk(f'{home_path}/finetuning/experiments/transformers/tokenized_datasets/{model_type}/{dataset_name}/{file_name}')
+                    dataset = datasets.load_from_disk(f'{home_path}/sprint/data/tokenized_datasets/{model_type}/{dataset_name}/{file_name}')
                         #dataset = pickle.load(f)
                 except FileNotFoundError:
                     try:

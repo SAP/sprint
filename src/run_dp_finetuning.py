@@ -18,7 +18,7 @@ def main():
         "--config", 
         type=str,
         default=None,
-        help="Path to the configuration file"
+        help="Name of the configuration file"
     )
     
     args = parser.parse_args()
@@ -26,7 +26,7 @@ def main():
     try:
         # Load configuration
         config_manager = ConfigManager()
-        config = config_manager.load_from_yaml(args.config)
+        config = config_manager.load_from_yaml(config_file=args.config)
         
         # Create and run experiments
         experiment_runner = ExperimentRunner(config)

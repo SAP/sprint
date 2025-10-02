@@ -377,6 +377,7 @@ def main():
         "RENDEZVOUS": "env://",
         "MASTER_ADDR": master_instance.private_ip_address,
         "MASTER_PORT": str(args.master_port),
+        "SPRINT_PATH": args.sprint_path,
         #"TP_SOCKET_IFNAME": "enX0",#"nonexist",#
         #"GLOO_SOCKET_IFNAME": "enX0",#"nonexist",#"enX0",
     }
@@ -515,6 +516,14 @@ def parse_args():
         help="The full path to the source folder",
         required=True,
         default="src",
+    )
+
+    parser.add_argument(
+        "--sprint_path",
+        type=str,
+        help="The full path to the SPRINT repo",
+        required=False,
+        default="/home/ubuntu/aws-launcher-tmp",
     )
 
    

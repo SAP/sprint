@@ -9,21 +9,20 @@ following the same patterns as the refactored fine-tuning code.
 """
 
 import argparse
-from typing import List
 from sprint_core import InferenceConfigManager, InferenceManager, MultiProcessLauncher
 
 
 def run_inference(args):
     """Main inference function that can be run in single or multi-process mode."""
     # Create configuration from YAML file
-    config = InferenceConfigManager(base_path=args.base_path).load_from_yaml(config_path=args.config)
+    config = InferenceConfigManager().load_from_yaml(config_file=args.config)
 
     # Create and setup inference manager
     inference_manager = InferenceManager(config)
     
     try:
         # Setup environment (CrypTen initialization, device assignment)
-        inference_manager.setup_environment()
+        inference_manager.setup_environment(crypten_config_path=args.crypten_config)
         
         # Load model and data
         inference_manager.load_model()
@@ -56,17 +55,17 @@ def main():
     )
 
     parser.add_argument(
-        "--base_path",
+        "--crypten_config",
         type=str,
-        required=False,
-        help="Base path for temporary files on aws"
+        required=True,
+        help="Path to CrypTen configuration file"
     )
     
     args = parser.parse_args()
     
     try:
         # Load configuration to determine execution mode
-        config = InferenceConfigManager(base_path=args.base_path).load_from_yaml(config_path=args.config)
+        config = InferenceConfigManager().load_from_yaml(config_file=args.config)
 
         if config.encrypted and config.world_size > 1 and config.multiprocess:
             # Multi-process encrypted inference

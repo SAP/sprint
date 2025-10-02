@@ -4,19 +4,17 @@
 """Inference management and execution for SPRINT models."""
 
 import logging
-from pyexpat import model
 import torch
 import crypten
 import json
 import os
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, Any
 
-from .constants import MODEL_DICT
-from torch import device
 from .inference_config import InferenceConfig
 from .model_factory import ModelFactory
 from .data_loaders import DataLoaderFactory
 from modeling.lora.lora_utils import get_lora_config_from_model, decrypt_non_lora_parameters, LoraConfig
+from .constants import CONFIG_PATH, MODELS_PATH, INFERENCE_RESULTS_PATH, MODEL_DICT
 
 
 class InferenceManager:
@@ -28,12 +26,15 @@ class InferenceManager:
         self.device = "cpu"
         self.model = None
         self.test_dataloader = None
-        
-    def setup_environment(self) -> None:
+
+    def setup_environment(self, crypten_config_file: str) -> None:
         """Setup CrypTen environment and device assignment."""
+        crypten_config_path = os.path.join(CONFIG_PATH, crypten_config_file)
         if self.config.encrypted:
-            config_file_path = f"{self.config.src_path}/configs/{self.config.crypten_config}"
-            crypten.init(config_file=config_file_path)
+            try:
+                crypten.init(config_file=crypten_config_path)
+            except:
+                raise FileNotFoundError(f"Crypten config file {crypten_config_path} not found in {CONFIG_PATH}")
             self.rank = crypten.communicator.get().get_rank()
             print(f"Crypten initialized on rank {self.rank}")
         else:
@@ -51,7 +52,8 @@ class InferenceManager:
             self.device = "cpu"
             
         self._debug_print(f"Device: {self.device}")
-    
+
+
     def load_model(self) -> None:
         """Load the fine-tuned model."""
         model_type = self._get_model_type()
@@ -59,12 +61,13 @@ class InferenceManager:
         model_type_to_class = self._get_model_classes()
         
         # Load model
+        model_path = os.path.join(MODELS_PATH, self.config.test_dataset, f"{self.config.model_name}.pth")
         try:
-            if not os.path.exists(self.config.model_path):
-                raise FileNotFoundError(f"Model file not found: {self.config.model_path}")
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Model file not found: {model_path}")
             self.model = ModelFactory.load_finetuned_model(
                 model_name=self.config.model_name,
-                model_path=self.config.model_path,
+                model_path=model_path,
                 test_dataset=self.config.test_dataset,
                 device=self.device,
                 model_type_to_class=model_type_to_class,
@@ -110,7 +113,8 @@ class InferenceManager:
             self.model.encrypt()
             self._decrypt_non_lora_parameters()
             self._debug_print("Model encrypted")
-    
+
+
     def load_data(self) -> None:
         """Load test data."""
         model_type = self._get_model_type()
@@ -124,7 +128,8 @@ class InferenceManager:
         )
         
         self._debug_print("Retrieved data loader")
-    
+
+
     def run_inference(self) -> Dict[str, Any]:
         """Run inference and return results."""
         if self.model is None or self.test_dataloader is None:
@@ -176,15 +181,16 @@ class InferenceManager:
             if self.config.encrypted:
                 print(f"Overflows detected: {cnt_overflows}, overflows corrected: {corrected_overflows}")
 
-        home_path = os.path.expanduser("~")
-        experiment_name = f'{"clear" if not self.config.encrypted else f"mpc{self.config.world_size}p"}_{self.config.model_name}_{self.config.test_dataset}'
-        FINETUNING_RESULTS_PATH = f"{home_path}/sprint/data/inference/accuracy/{self.config.test_dataset}"
 
-        with open(f"{FINETUNING_RESULTS_PATH}/{experiment_name}_results.json", "w") as f:
+        experiment_name = f'{"clear" if not self.config.encrypted else f"mpc{self.config.world_size}p"}_{self.config.model_name}_{self.config.test_dataset}'
+        result_path = os.path.join(INFERENCE_RESULTS_PATH, "accuracy", self.config.test_dataset)
+        os.makedirs(result_path, exist_ok=True)
+
+        with open(f"{result_path}/{experiment_name}_results.json", "w") as f:
             json.dump(results, f)
 
-        return results
-    
+        return results   
+
 
     def run_inference_profiled(self) -> Dict[str, Any]:
         if not self.config.encrypted or not self.config.profile:
@@ -238,10 +244,11 @@ class InferenceManager:
             "communication": self.model.communication
         }
 
-        home_path = os.path.expanduser("~")
-        FINETUNING_RESULTS_PATH = f"{home_path}/sprint/data/inference/runtime"
-        os.makedirs(FINETUNING_RESULTS_PATH, exist_ok=True)
-        with open(f"{FINETUNING_RESULTS_PATH}/results.json", "w") as f:
+        experiment_name = f'{"clear" if not self.config.encrypted else f"mpc{self.config.world_size}p"}_{self.config.model_name}_{self.config.test_dataset}'
+        result_path = os.path.join(INFERENCE_RESULTS_PATH, "runtime", self.config.test_dataset)
+        os.makedirs(result_path, exist_ok=True)
+
+        with open(f"{result_path}/{experiment_name}_profiled_results.json", "w") as f:
             json.dump(results, f)
 
         return results
@@ -299,7 +306,8 @@ class InferenceManager:
             'overflow_detected': overflow_detected,
             'overflow_corrected': overflow_corrected
         }
-    
+
+
     def _get_model_type(self) -> str:
         """Determine model type from model name."""
         if "roberta" in self.config.model_name:
@@ -308,7 +316,8 @@ class InferenceManager:
             return "bert"
         else:
             raise ValueError("Model type not supported, it must contain either 'bert' or 'roberta'")
-    
+
+
     def _get_model_classes(self) -> Dict[str, Any]:
         """Get appropriate model classes based on encryption mode."""
         if self.config.encrypted:
@@ -333,7 +342,8 @@ class InferenceManager:
                 "bert": BertForSequenceClassification,
                 "roberta": RobertaForSequenceClassification
             }
-    
+
+
     def _decrypt_non_lora_parameters(self) -> None:
         """Decrypt non-LoRA parameters for efficiency."""
         state_dict = self.model.state_dict()
@@ -345,7 +355,8 @@ class InferenceManager:
                 model=self.model,
                 peft_config=lora_config
             )
-        
+
+
     def _debug_print(self, message: str) -> None:
         """Print debug messages if debug mode is enabled."""
         if self.config.debug:

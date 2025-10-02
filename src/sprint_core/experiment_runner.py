@@ -88,7 +88,7 @@ class ExperimentRunner:
             device_for_file,
             dataset_name
         )
-        file_path = f"{self.results_dir}/{file_name}"
+        file_path = os.path.join(self.results_dir, file_name)
         
         # Check if experiment already exists
         if self._experiment_exists(file_path, experiment_params):

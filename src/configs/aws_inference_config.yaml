@@ -36,14 +36,5 @@ profile: true
 multiprocess: false
 
 
-# Paths
-home_path: "/home/ubuntu"
-src_path: "/home/ubuntu/aws-launcher-tmp"
-data_path: "/home/ubuntu/aws-launcher-tmp/data"
-
-
-
-model_config: "crypten_inference_config.yaml"
-
 
 

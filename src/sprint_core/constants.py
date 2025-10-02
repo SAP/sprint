@@ -6,6 +6,49 @@
 import os
 from typing import Dict
 
+
+def _get_sprint_path():
+    """Get SPRINT path from environment or detect automatically."""
+    # 1. Check environment variable first
+    if os.getenv('SPRINT_PATH'):
+        return os.getenv('SPRINT_PATH')
+    
+    print("⚠️ SPRINT_PATH environment variable not set, attempting to detect automatically.")
+    
+    # 2. Try to detect based on current file location
+    current_file = os.path.abspath(__file__)
+    # Go up from src/sprint_core/constants.py to project root
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
+    
+    # Check if this looks like the right directory
+    if os.path.exists(os.path.join(project_root, "src", "sprint_core")):
+        print(f"✅ Detected SPRINT_PATH as: {project_root}")
+        return project_root
+    
+    # 3. Fallback to current working directory
+    cwd = os.getcwd()
+    if os.path.exists(os.path.join(cwd, "src", "sprint_core")):
+        print(f"✅ Using current working directory as SPRINT_PATH: {cwd}")
+        return cwd
+    
+    # 4. Final fallback to home directory
+    print("⚠️ Could not detect SPRINT_PATH automatically, defaulting to $HOME/sprint.")
+    return f"{os.getenv('HOME')}/sprint"
+
+
+
+SPRINT_PATH = _get_sprint_path()
+
+# Default paths
+CONFIG_PATH = f"{SPRINT_PATH}/src/configs"
+BASE_DATA_PATH = f"{SPRINT_PATH}/data"
+
+TOKENIZED_DATASETS_PATH = f"{BASE_DATA_PATH}/tokenized_datasets"
+MODELS_PATH = f"{BASE_DATA_PATH}/models"
+FINETUNING_RESULTS_PATH = f"{BASE_DATA_PATH}/finetuning"
+INFERENCE_RESULTS_PATH = f"{BASE_DATA_PATH}/inference"
+
+
 # Dataset configurations
 LABELS_PER_DATASET: Dict[str, int] = {
     "sst2": 2,
@@ -33,13 +76,9 @@ MODEL_DICT: Dict[str, str] = {
 # Model types
 SUPPORTED_MODEL_TYPES = ["bert", "roberta"]
 
-# Default paths
-HOME_PATH = os.getenv("HOME")
-BASE_DATA_PATH = f"{HOME_PATH}/sprint/data"
-TOKENIZED_DATASETS_PATH = f"{BASE_DATA_PATH}/tokenized_datasets"
-MODELS_PATH = f"{BASE_DATA_PATH}/models"
-FINETUNING_RESULTS_PATH = f"{BASE_DATA_PATH}/finetuning"
-SAVED_MODELS_PATH = f"{BASE_DATA_PATH}/models"
+
+
+
 
 # Default LoRA configuration
 DEFAULT_LORA_CONFIG = {

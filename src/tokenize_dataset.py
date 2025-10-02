@@ -44,8 +44,7 @@ model_names = {
 
 def tokenize_labeled_test_dataset(dataset_name, model_type="bert"):
     # read the .tsv file
-    home = os.getenv("HOME")
-    dataset_path = f"{home}/finetuning/experiments/transformers/tokenized_datasets/roberta/sst2/label_test.tsv"
+    dataset_path = f"{TOKENIZED_DATASETS_PATH}/{model_type}/{dataset_name}/label_test.tsv"
     test_dataset = pd.read_csv(dataset_path, delimiter='\t', header=None, names=['label', 'sentence'])
 
     # add the header as it was a dataset from huggingface

@@ -46,11 +46,12 @@ https://github.com/SAP/sprint
 
 ### Set up the environment
 
-- **Python Version**: Tested with Python 3.8.17
+- **Python Version**: Tested with Python 3.8.17 (The setup script installs this version if not present)
 - **Hardware**: All experiments can be run on CPU, but GPU with CUDA support is recommended for larger models and datasets
 - **Operating System**: Tested on macOS and Linux.
 
 #### Dependencies and Installation
+The repository includes a `setup.sh` script that automates the environment setup, including creating a virtual environment and installing dependencies. 
 
 1. Clone the repository:
    ```bash
@@ -58,38 +59,68 @@ https://github.com/SAP/sprint
    cd sprint
    ```
 
-2. Install dependencies:
+2. Make setup script executable and run it:
    ```bash
-   pip install -r requirements.txt
+   chmod +x setup.sh
+   ./setup.sh
    ```
 
-3. **Important Setup Notes**:
-   - You may need to set `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file.
-   - **Critical Modification Required**: Add `register_full_backward_hook` in line 98 of `autograd_grad_sample.py` of the private-transformers library (`register_backward_hook` does not support layers with multiple autograd nodes like LoRALayers).
+Alternatively, a **manual setup process** is provided below: 
+
+2. Install python version 3.8 (e.g. in linux via apt)
+```bash
+   sudo apt-get install python3.8 python3.8-venv python3.8-dev
+```
+
+3. Setup and activate a virtual environment
+```bash
+   python3.8 -m venv sprint_env
+   source sprint_env/bin/activate
+```
+
+4. Install dependencies:
+```bash
+   SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True pip install -r requirements.txt
+```
+
+*NOTE: `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file (i.e., replacing `sklearn` with `scikit-learn`).*
+
+5. **Modify `autograd_grad_sample.py` in the `private_transformers library`**:
+   - The expected path with the virtual environment is `sprint_env/lib/python3.8/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
+   - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
+
+   
+
+6. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
+```bash
+   export SPRINT_PATH=$(pwd)
+```
 
 #### Setup Verification
 
 To verify that everything is set up correctly:
 
+
 1. **Test Data Loading**: Download and tokenize a dataset:
-   ```bash
+```bash
    cd src
    python tokenize_dataset.py --dataset sst2 --model_type roberta
-   ```
-   This should create tokenized data in `data/tokenized_dataset/roberta/sst2/`.
+```
+   This should create tokenized data in `$SPRINT_PATH/data/tokenized_dataset/roberta/sst2/`.
 
 2. **Test DP Fine-tuning**: Run a small fine-tuning experiment:
-   ```bash
+```bash
    cd src
-   python run_dp_finetuning.py --config configs/fine-tuning_example_cuda.yaml
-   ```
-   This verifies the DP training pipeline is working correctly.
+   python run_dp_finetuning.py --config fine-tuning_example_cuda.yaml
+```
+This verifies the DP training pipeline is working correctly.
 
 3. **Test Inference**: Ensure you can load a configuration file and run inference:
-   ```bash
-   cd src
-   python run_inference.py --config configs/inference_example.yaml
-   ```
+   
+```bash
+cd src
+python run_inference.py --config inference_example.yaml --crypten_config crypten_inference_config.yaml
+```
 
 
 ## Notes on Reusability 

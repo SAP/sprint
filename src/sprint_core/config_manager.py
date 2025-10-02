@@ -6,8 +6,8 @@
 import os
 import yaml
 from dataclasses import dataclass
-from typing import List, Optional, Union, Any, Dict
-from .constants import DEFAULT_TRAINING_PARAMS, DEFAULT_LORA_CONFIG
+from typing import List, Optional, Any, Dict
+from .constants import CONFIG_PATH
 
 
 @dataclass
@@ -51,18 +51,17 @@ class TrainingConfig:
 class ConfigManager:
     """Manages configuration loading and validation."""
     
-    def __init__(self, base_path: str = None):
-        self.base_path = base_path or f"{os.getenv('HOME')}/sprint/src/configs"
+    def __init__(self):
+        super().__init__()
     
-    def load_from_yaml(self, config_path: Optional[str] = None) -> TrainingConfig:
-        """Load configuration from YAML file."""
-        config_path = f"{self.base_path}/{config_path}"
-        
+    def load_from_yaml(self, config_file: str = None) -> TrainingConfig:
+        if config_file is None:
+            raise ValueError("Configuration file name must be provided.")
         try:
-            with open(config_path, "r") as file:
+            with open(os.path.join(CONFIG_PATH, config_file), "r") as file:
                 config_dict = yaml.safe_load(file)
         except FileNotFoundError:
-            raise FileNotFoundError(f"Configuration file not found: {config_path}")
+            raise FileNotFoundError(f"Configuration file not found: {config_file} in {CONFIG_PATH}")
         except yaml.YAMLError as e:
             raise ValueError(f"Error parsing YAML configuration: {e}")
         
@@ -103,7 +102,8 @@ class ConfigManager:
                 random_seed_for_training=config_dict['random_seed_for_training'],
                 training_seed=config_dict.get('training_seed'),
                 init_seeds=[int(x) for x in config_dict['init_seeds']],
-                subsampling_type=config_dict['subsampling_type']
+                subsampling_type=config_dict['subsampling_type'],
+                
             )
         except KeyError as e:
             raise ValueError(f"Missing required configuration key: {e}")

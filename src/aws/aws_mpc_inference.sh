@@ -1,8 +1,12 @@
 # Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
 # SPDX-License-Identifier: Apache-2.0
 
-export SPRINT_PATH=$HOME/sprint
-
+# Check if SPRINT_PATH is set and not empty
+if [ -z "${SPRINT_PATH}" ]; then
+    echo "❌ SPRINT_PATH is not set!"
+    echo "Please set it with: export SPRINT_PATH=/path/to/sprint"
+    exit 2
+fi
 
 python $SPRINT_PATH/src/aws/aws_launcher.py \
     --ssh_key_file=$HOME/aws_utils/aws_keys.pem \
@@ -10,9 +14,10 @@ python $SPRINT_PATH/src/aws/aws_launcher.py \
     --regions=eu-central-1 \
     --master_port=5000 \
     --src_folder $SPRINT_PATH/src/ \
+    --sprint_path /home/ubuntu/aws-launcher-tmp \
     run_inference.py \
         --config aws_inference_config.yaml \
-        --base_path /home/ubuntu/aws-launcher-tmp/configs
+        --crypten_config crypten_inference_config.yaml
 
         #--mode inference \
         #--examples 10 \

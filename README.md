@@ -27,6 +27,7 @@ The repository is organized as follows:
   - `run_dp_finetuning.py`: Refactored script for fine-tuning models with differential privacy.
   - `run_inference.py`: Refactored script for model inference (cleartext and MPC).
   - `sprint_core/`: Core modular components for SPRINT experiments.
+    - `constants.py`: Constants and path management (Needs to be modified if custom paths are used).
     - `config_manager.py`: Configuration management and validation.
     - `model_factory.py`: Model creation and LoRA integration.
     - `data_loaders.py`: Data loading and tokenization utilities.
@@ -64,67 +65,98 @@ The repository is organized as follows:
    git clone https://github.com/SAP/sprint.git
    cd sprint
    ```
-2. Install dependencies:
-   ```bash
-    pip install -r requirements.txt
-    ```
 
-3. **Important Setup Notes**:
-   - You may need to set `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file.
-   - **Critical Modification Required**: Add `register_full_backward_hook` in line 98 of `autograd_grad_sample.py` of the private-transformers library (`register_backward_hook` does not support layers with multiple autograd nodes like LoRALayers).
+2. Make setup script executable and run it:
+   ```bash
+   chmod +x setup.sh
+   ./setup.sh
+   ```
+#### Alternative Manual Setup
+
+2. Install python version 3.8 (e.g. in linux via apt)
+```bash
+   sudo apt-get install python3.8 python3.8-venv python3.8-dev
+```
+
+3. Setup and activate a virtual environment
+```bash
+   python3.8 -m venv sprint_env
+   source sprint_env/bin/activate
+```
+
+4. Install dependencies:
+```bash
+   SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True pip install -r requirements.txt
+```
+
+*NOTE: `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file (i.e., replacing `sklearn` with `scikit-learn`).*
+
+5. **Modify `autograd_grad_sample.py` in the `private_transformers library`**:
+   - The expected path with the virtual environment is `sprint_env/lib/python3.8/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
+   - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
+
+   
+
+6. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
+```bash
+   export SPRINT_PATH=$(pwd)
+```
 
 ## Run DP Fine-tuning
 1. Download and tokenize the dataset (for example sst2):
-    ```bash
+```bash
     cd src
     python tokenize_dataset.py --dataset sst2 --model_type roberta
-    ```
-This will download the dataset and save it in the `data` folder. The tokenized dataset will be saved in `data/tokenized_dataset/roberta/sst2/`.
+```
+This will download the dataset and save it in the `data` folder. The tokenized dataset will be saved in `$SPRINT_PATH/data/tokenized_dataset/roberta/sst2/`.
 
-2. Configure the fine-tuning parameters in `src/configs/fine-tuning_example_cuda.yaml` (or create your own config file). 
+2. Configure the fine-tuning parameters in `$SPRINT_PATH/src/config/fine-tuning_example_cuda.yaml` (or create your own config file). 
 
-3. Run the fine-tuning script:
-   ```bash
+3. Run the fine-tuning script (using the absolute path to the config file):
+```bash
    cd src
    python run_dp_finetuning.py --config fine-tuning_example_cuda.yaml
-   ```
-   The fine-tuned model will be saved in the `data/models/` folder. The results (loss, validation accuracy) will be saved in the `data/finetuning/` folder. 
+```
+   The fine-tuned model will be saved in the `$SPRINT_PATH/data/models/` folder. The results (loss, validation accuracy) will be saved in the `$SPRINT_PATH/data/finetuning/` folder.
 
 ## Run Inference
 The inference can run in cleartext or in MPC. The cleartext mode is used for local evaluation and debugging, while the MPC mode is used for secure inference. The MPC inference can be run locally on two different processes (to evaluate MPC accuracy) or on AWS with multiple machines (to evaluate the communication and overhead).
 
-During inference, there is the possibility to apply logits capping (if not applied during fine-tuning), or to apply a different capping threshold. The capping threshold is set in the `src/configs/config_cuda0.yaml` file during fine-tuning (default value is 50.0).
+During inference, there is the possibility to apply logits capping (if not applied during fine-tuning), or to apply a different capping threshold. The capping threshold is set in the `$SPRINT_PATH/src/configs/config_cuda0.yaml` file during fine-tuning (default value is 50.0).
 
-The ouput of the inference process can be saved in a log file via >> `$log_file` (e.g. `log.txt`).
+The output of the inference process can be saved in a log file via >> `$log_file` (e.g. `log.txt`).
 
 
 ### Run local inference (cleartext or in MPC)
 ```bash
 cd src
-python run_inference.py --config inference_example.yaml
+python run_inference.py --config inference_example.yaml --crypten_config crypten_inference_config.yaml
 ```
 
+The config file `$SPRINT_PATH/src/configs/inference_example.yaml` contains the parameters for the inference (dataset, model, batch size, etc.). The config file `$SPRINT_PATH/src/configs/crypten_inference_config.yaml` contains the parameters for CrypTen.
+
+In the inference config file, the `model_name` can be either a model saved after fine-tuning (in `$SPRINT_PATH/data/models/`) or a pre-trained model from the HuggingFace model hub (e.g. `roberta-base`). In the latter case, the model will be loaded from the model hub and used for inference without any fine-tuning, to test the runtime and communication overhead of the MPC inference.
 
 ## AWS evaluation for runtime and communication overhead
-The inference on different AWS machines can be run with the script in `src/aws/` folder via:
+The inference on different AWS machines can be run with the script in `$SPRINT_PATH/src/aws/` folder via:
 ```bash
 ./aws_mpc_inference.sh
 ```
 
-This bash scripts runs on toy data. The script used for inference is the same as for local inference, with a different config files. For the example we use `aws_inference_config.yaml`.
+This bash scripts runs on toy data. The script used for inference is the same as for local inference, with a different config files. For the example we use `$SPRINT_PATH/src/configs/aws_inference_config.yaml`.
 The data will be saved on the aws machine in the `aws-launcher-tmp` folder.
 The AWS machines need to be configured with the same environment as the local machine.
 
 
 ## Third-parties components
 
-The code for DP-AdamBC in `src/modeling/optimizers` has been adapted from https://github.com/ubc-systopia/DP-AdamBC.
+The code for DP-AdamBC in `$SPRINT_PATH/src/modeling/optimizers` has been adapted from https://github.com/ubc-systopia/DP-AdamBC.
 
-The modeling for BERT and RoBERTA model ,in `src/modeling/models` folder, has been adapted for SPRINT fine-tuning and MPC inference from the Transformer library (https://github.com/huggingface/transformers).
+The modeling for BERT and RoBERTA model ,in `$SPRINT_PATH/src/modeling/models` folder, has been adapted for SPRINT fine-tuning and MPC inference from the Transformer library (https://github.com/huggingface/transformers).
 
 The code for LoRA has been adapted from LoRA repository (https://github.com/microsoft/LoRA).
 
-The launchers for MPC inference on AWS in the `src/aws` folder have been adapted from the CrypTen repository (https://github.com/facebookresearch/CrypTen).
+The launchers for MPC inference on AWS in the `$SPRINT_PATH/src/aws` folder have been adapted from the CrypTen repository (https://github.com/facebookresearch/CrypTen).
 
 
 ### Security/Privacy Issues and Ethical Concerns
@@ -145,9 +177,9 @@ The scope of this repository is to create a general framework that integrates di
 
 Here we list some examples of how this artifact can be adapted and extended:
 
-- **Different Models**: The modular architecture supports various transformer architectures beyond RoBERTa and BERT, including newer models like DeBERTa, GPT-like models, or custom transformer variants. This requires adding modeling files for both cleartext and MPC variants in `src/modeling/models`.
+- **Different Models**: The modular architecture supports various transformer architectures beyond RoBERTa and BERT, including newer models like DeBERTa, GPT-like models, or custom transformer variants. This requires adding modeling files for both cleartext and MPC variants in `$SPRINT_PATH/src/modeling/models`.
 - **Novel Datasets**: The data loading framework can be extended to handle additional NLP tasks beyond GLUE benchmark tasks, including custom datasets for domain-specific applications.
-- **Non-linear Function Approximations**: Researchers can experiment with different MPC-friendly approximations for activation functions (e.g., polynomial approximations for GELU, ReLU variants) by adding new activation modules to `src/modeling/activations`.
+- **Non-linear Function Approximations**: Researchers can experiment with different MPC-friendly approximations for activation functions (e.g., polynomial approximations for GELU, ReLU variants) by adding new activation modules to `$SPRINT_PATH/src/modeling/activations`.
 - **DP Techniques**: The framework supports experimentation with different noise mechanisms, clipping strategies, and privacy accounting methods beyond the current DP-SGD implementation, thanks to the integration with Opacus, by changing accounting or noise type configurations.
 
 The modular design enables researchers to replace individual components (optimizers, activation functions, privacy mechanisms) without modifying the entire pipeline, facilitating systematic evaluation of privacy-utility trade-offs in secure transformer inference.
