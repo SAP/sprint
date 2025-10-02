@@ -54,7 +54,7 @@ The repository is organized as follows:
 
 
 ## Requirements and Setup
-- **Python Version**: Tested with Python 3.8.17
+- **Python Version**: Tested with Python 3.9.23
 - **Hardware**: All experiments can be run on CPU, but GPU with CUDA support is recommended for larger models and datasets
 - **Operating System**: Tested on macOS and Linux.
 
@@ -87,12 +87,20 @@ After cloning the repository, you can follow the manual setup instructions below
 
 2. Install python version 3.9 (e.g. in linux via apt)
 ```bash
-   sudo apt-get install python3.8 python3.8-venv python3.8-dev
+   sudo apt-get install python3.9 python3.9-venv python3.9-dev
+```
+This code may fail since latest os versions do not have python3.9 available in default repositiories (e.g., in Ubuntu22.04). IN that case you may need to run the following commands: 
+```bash
+   sudo apt-get update
+   sudo apt-get install -y software-properties-common
+   sudo add-apt-repository ppa:deadsnakes/ppa
+   sudo apt-get update
+   sudo apt-get install python3.9 python3.9-venv python3.9-dev
 ```
 
 3. Setup and activate a virtual environment
 ```bash
-   python3.8 -m venv sprint_env
+   python3.9 -m venv sprint_env
    source sprint_env/bin/activate
 ```
 
@@ -104,7 +112,7 @@ After cloning the repository, you can follow the manual setup instructions below
 *NOTE: `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file (i.e., replacing `sklearn` with `scikit-learn`).*
 
 5. **Modify `autograd_grad_sample.py` in the `private_transformers library`**:
-   - The expected path with the virtual environment is `sprint_env/lib/python3.8/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
+   - The expected path with the virtual environment is `sprint_env/lib/python3.9/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
    - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
 
    

@@ -75,10 +75,18 @@ The repository includes a `setup.sh` script that automates the environment setup
    export SPRINT_PATH=$(pwd)
 ```
 
-Alternatively, a **manual setup process** is provided below: 
+Alternatively, a **manual setup process** is provided below (for linux): 
 
 2. Install python version 3.9 (e.g. in linux via apt)
 ```bash
+   sudo apt-get install python3.9 python3.9-venv python3.9-dev
+```
+This code may fail since latest os versions do not have python3.9 available in default repositiories (e.g., in Ubuntu22.04). IN that case you may need to run the following commands: 
+```bash
+   sudo apt-get update
+   sudo apt-get install -y software-properties-common
+   sudo add-apt-repository ppa:deadsnakes/ppa
+   sudo apt-get update
    sudo apt-get install python3.9 python3.9-venv python3.9-dev
 ```
 
