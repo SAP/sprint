@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 # Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -44,37 +44,37 @@ detect_os() {
     print_status "Detected OS: $OS"
 }
 
-# Install Python 3.8
+# Install Python 3.9
 install_python() {
-    print_status "Installing Python 3.8..."
+    print_status "Installing Python 3.9..."
     
     if [[ "$OS" == "linux" ]]; then
         # Focus on apt for Linux
         if command -v apt-get &> /dev/null; then
-            print_status "Installing Python 3.8 via apt..."
+            print_status "Installing Python 3.9 via apt..."
             sudo apt-get update
-            sudo apt-get install -y python3.8 python3.8-venv python3.8-dev python3.8-distutils
-            PYTHON_CMD="python3.8"
+            sudo apt-get install -y python3.9 python3.9-venv python3.9-dev python3.9-distutils
+            PYTHON_CMD="python3.9"
         else
             print_error "This script requires apt package manager (Ubuntu/Debian)"
-            print_error "Please install Python 3.8 manually and ensure 'python3.8' command is available"
+            print_error "Please install Python 3.9 manually and ensure 'python3.9' command is available"
             exit 1
         fi
         
     elif [[ "$OS" == "macos" ]]; then
         # Check if Homebrew is available
         if command -v brew &> /dev/null; then
-            print_status "Installing Python 3.8 via Homebrew..."
-            brew install python@3.8 || true
+            print_status "Installing Python 3.9 via Homebrew..."
+            brew install python@3.9 || true
             # Check different possible locations
-            if command -v python3.8 &> /dev/null; then
-                PYTHON_CMD="python3.8"
-            elif [[ -f "/opt/homebrew/bin/python3.8" ]]; then
-                PYTHON_CMD="/opt/homebrew/bin/python3.8"
-            elif [[ -f "/usr/local/bin/python3.8" ]]; then
-                PYTHON_CMD="/usr/local/bin/python3.8"
+            if command -v python3.9 &> /dev/null; then
+                PYTHON_CMD="python3.9"
+            elif [[ -f "/opt/homebrew/bin/python3.9" ]]; then
+                PYTHON_CMD="/opt/homebrew/bin/python3.9"
+            elif [[ -f "/usr/local/bin/python3.9" ]]; then
+                PYTHON_CMD="/usr/local/bin/python3.9"
             else
-                print_error "Homebrew installation succeeded but python3.8 command not found"
+                print_error "Homebrew installation succeeded but python3.9 command not found"
                 exit 1
             fi
         else
@@ -166,7 +166,7 @@ apply_modifications() {
         print_status "Found autograd_grad_sample.py at: $AUTOGRAD_FILE"
         
         # Check if modification is already applied
-        if grep -q "register_full_backward_hook" "$AUTOGRAD_FILE"; then
+        if grep -q "handles.append(layer.register_full_backward_hook(this_backward))" "$AUTOGRAD_FILE"; then
             print_success "Critical modification already applied"
         else
             print_status "Applying critical modification..."
@@ -181,9 +181,9 @@ apply_modifications() {
             print_warning "Backup created at: $AUTOGRAD_FILE.backup"
         fi
     else
-        print_error "Could not find autograd_grad_sample.py in private_transformers"
+        print_error "Could not find autograd_grad_sample.py in private_transformers (Use manual setup instructions)"
         print_error "You may need to apply the modification manually"
-        print_error "Location should be: <env_path>/lib/python3.8/site-packages/private_transformers/autograd_grad_sample.py"
+        print_error "Location should be: <env_path>/lib/python3.9/site-packages/private_transformers/autograd_grad_sample.py"
         print_error "Change: replace 'register_backward_hook' with 'register_full_backward_hook'"
     fi
 }
@@ -199,29 +199,6 @@ create_directories() {
     mkdir -p "$SPRINT_PATH/data/inference/runtime"
     
     print_success "Directory structure created"
-}
-
-# Verify installation
-verify_installation() {
-    print_status "Verifying installation..."
-    
-    # Test imports
-    python -c "
-import torch
-import transformers
-import private_transformers
-import crypten
-from sprint_core.constants import SPRINT_PATH
-print('✅ All imports successful')
-print(f'✅ SPRINT_PATH: {SPRINT_PATH}')
-"
-    
-    if [[ $? -eq 0 ]]; then
-        print_success "Installation verification passed"
-    else
-        print_error "Installation verification failed"
-        exit 1
-    fi
 }
 
 # Print next steps
@@ -260,8 +237,6 @@ main() {
     install_requirements
     apply_modifications
     create_directories
-    verify_installation
-    cd src
     print_next_steps
 }
 

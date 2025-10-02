@@ -4,13 +4,14 @@
 # Example configuration file for inference runs
 
 # Model settings
-model_name: "roberta-base_adam_bc_falora_r16_a16_kaiming_uniform_bolt_gelu_softmax__sst2"
+model_name: "roberta-base" # Example with non fine-tuned-model just for testing
+#model_name: "roberta-base_adam_bc_falora_r16_a16_kaiming_uniform_bolt_gelu_softmax__sst2" # Example with fine-tuned model
 test_dataset: "sst2" # "qnli"
 batch_size: 2
 n_samples: 2
 
 # Device configuration (list of devices for multi-process)
-devices: ["cpu"]
+devices: ["cpu", "cpu"]
 # devices: ["cuda:0", "cuda:1"] in the same machine. If different machines then ["cuda:0", "cuda:0"]
 
 # Model configuration overrides
@@ -24,14 +25,14 @@ lora_rank: 16
 lora_alpha: 16
 
 # Execution settings
-encrypted: true
-clear_embedding: true
-clear_non_trainable: true
-verbose: true
-world_size: 2
-debug: true
-profile: true
-multiprocess: true
+encrypted: true # whether to use secure inference with CrypTen
+clear_embedding: true # whether to leave the embedding layer in cleartext
+clear_non_trainable: true # whether to leave non-trainable layers in cleartext
+verbose: true 
+world_size: 2 # number of parties in CrypTen
+debug: true 
+profile: true # whether to profile the execution time and communication
+multiprocess: true # whether to use multi-process for inference
 
 
 

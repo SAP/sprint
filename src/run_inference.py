@@ -22,7 +22,7 @@ def run_inference(args):
     
     try:
         # Setup environment (CrypTen initialization, device assignment)
-        inference_manager.setup_environment(crypten_config_path=args.crypten_config)
+        inference_manager.setup_environment(crypten_config_file=args.crypten_config)
         
         # Load model and data
         inference_manager.load_model()

@@ -74,7 +74,6 @@ class InferenceConfigManager:
             encrypted=config_dict.get('encrypted', False),
             world_size=config_dict.get('world_size', 1),
             debug=config_dict.get('debug', False),
-            model_path=config_dict.get('model_path'),
             lora_type=config_dict.get('lora_type'),
             target_modules=config_dict.get('target_modules'),
             modules_to_save=config_dict.get('modules_to_save'),
@@ -83,7 +82,5 @@ class InferenceConfigManager:
             profile=config_dict.get('profile', False),
             verbose=config_dict.get('verbose', False),
             n_samples=config_dict.get('n_samples', -1),
-            base_path=config_dict.get('base_path'),
-            data_path=config_dict.get('data_path'),
             multiprocess=config_dict.get('multiprocess', False)
         )

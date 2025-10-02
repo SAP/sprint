@@ -61,19 +61,31 @@ The repository is organized as follows:
 ### Installation
 
 1. Clone the repository:
-   ```bash
+```bash
    git clone https://github.com/SAP/sprint.git
    cd sprint
-   ```
+```
 
 2. Make setup script executable and run it:
-   ```bash
+```bash
    chmod +x setup.sh
    ./setup.sh
-   ```
-#### Alternative Manual Setup
+```
 
-2. Install python version 3.8 (e.g. in linux via apt)
+3. Activate the virtual environment:
+```bash
+   source sprint_env/bin/activate
+```
+
+4. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
+```bash
+   export SPRINT_PATH=$(pwd)
+```
+
+#### Alternative Manual Setup
+After cloning the repository, you can follow the manual setup instructions below: 
+
+2. Install python version 3.9 (e.g. in linux via apt)
 ```bash
    sudo apt-get install python3.8 python3.8-venv python3.8-dev
 ```
@@ -96,7 +108,6 @@ The repository is organized as follows:
    - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
 
    
-
 6. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
 ```bash
    export SPRINT_PATH=$(pwd)
@@ -140,6 +151,7 @@ In the inference config file, the `model_name` can be either a model saved after
 ## AWS evaluation for runtime and communication overhead
 The inference on different AWS machines can be run with the script in `$SPRINT_PATH/src/aws/` folder via:
 ```bash
+cd $SPRINT_PATH/src/aws/
 ./aws_mpc_inference.sh
 ```
 

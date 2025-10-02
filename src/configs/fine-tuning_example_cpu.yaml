@@ -1,5 +1,6 @@
 # Copyright (c) 2025 SAP SE or an SAP affiliate company and sprint contributors
 # SPDX-License-Identifier: Apache-2.0
+# Example configuration file for fine-tuning runs with CPU
 
 dataset_name: "sst2"
 
@@ -40,6 +41,6 @@ exponential_scheduler_gammas: [1] #, 0.95]
 learning_rates: [5e-4] # []
 lora_ranks: [16] # [16, 32]
 lora_alphas: [1, 2] 
-lora_init: ["normal"] # ["normal", "orthogonal"]
+lora_init: ["normal"] # available: ["normal", "orthogonal", "kaiming_uniform", "kaiming_normal", "xavier_uniform", "xavier_normal"]
 softmaxes: ["softmax"] # ["softmax_max", "softmax_nn"]
 device: "cpu"

@@ -54,16 +54,26 @@ https://github.com/SAP/sprint
 The repository includes a `setup.sh` script that automates the environment setup, including creating a virtual environment and installing dependencies. 
 
 1. Clone the repository:
-   ```bash
+```bash
    git clone https://github.com/SAP/sprint.git
    cd sprint
-   ```
+```
 
 2. Make setup script executable and run it:
-   ```bash
+```bash
    chmod +x setup.sh
    ./setup.sh
-   ```
+```
+
+3. Activate the virtual environment:
+```bash
+   source sprint_env/bin/activate
+```
+
+4. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
+```bash
+   export SPRINT_PATH=$(pwd)
+```
 
 Alternatively, a **manual setup process** is provided below: 
 
@@ -121,7 +131,9 @@ This verifies the DP training pipeline is working correctly.
 cd src
 python run_inference.py --config inference_example.yaml --crypten_config crypten_inference_config.yaml
 ```
+*Note: this examples works with a non fine-tuned roberta-base model. The model_name can be replaced with the name of a fine-tuned model.*
 
+For more details, see the [README](README.md) in the repository.
 
 ## Notes on Reusability 
 The scope of this repository is to create a general framework that integrates differential privacy (DP) fine-tuning and multi-party computation (MPC) inference for transformer-based models. The overall goal is not only to reproduce our research results but to foster future research and development in privacy-preserving machine learning by providing a modular, extensible foundation.
