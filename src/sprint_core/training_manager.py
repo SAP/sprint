@@ -238,6 +238,7 @@ class TrainingManager:
     def save_best_model(
         self,
         state_dict: Dict[str, Any],
+        dataset_name: str,
         model_name: str,
         config_dict: Dict[str, Any],
         lora_config_dict: Dict[str, Any],
@@ -245,7 +246,8 @@ class TrainingManager:
         eval_params: Dict[str, Any]
     ) -> str:
         """Save the best model."""
-        model_path = os.path.join(MODELS_PATH, model_name)
+        model_path = os.path.join(MODELS_PATH, dataset_name, model_name)
+        print(f"Saving model to {model_path}...")
         # Check if the path exists, otherwise create it
         os.makedirs(os.path.dirname(model_path), exist_ok=True)
 

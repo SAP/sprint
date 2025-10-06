@@ -28,7 +28,7 @@ class Softmax_NN(nn.Module):
         if base_path is None:
             base_path = os.path.expanduser('~') + '/sprint'
         abs_path = f"{base_path}/data/models/ma_bert_softmax_weights.pt"
-        
+
         try:
             self.load_state_dict(torch.load("ma_bert_softmax_weights.pt"), strict=False)
         except FileNotFoundError:

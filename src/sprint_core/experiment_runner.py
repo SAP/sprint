@@ -286,7 +286,7 @@ class ExperimentRunner:
         """Generate model name for saving."""
         components = [
             self.config.pretrained_model,
-            params['optimizer'],
+            f"_{params['optimizer']}_",
             'lora_' if params['lora_type'] == 'lora' else '',
             'falora_' if params['lora_type'] == 'fa_lora' else '',
             f"r{params['lora_rank']}_" if params['lora_type'] != 'none' else '',
