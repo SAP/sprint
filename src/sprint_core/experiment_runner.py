@@ -237,6 +237,7 @@ class ExperimentRunner:
             trainer.save_best_model(
                 state_dict=best_model_dict,
                 model_name=model_name,
+                dataset_name=dataset_name,
                 config_dict=model_config.to_dict(),
                 lora_config_dict=lora_config.to_dict() if params['lora_type'] != "none" else {},
                 best_metrics={

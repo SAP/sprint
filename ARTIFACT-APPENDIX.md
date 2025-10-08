@@ -48,7 +48,7 @@ https://github.com/SAP/sprint
 
 - **Python Version**: Tested with Python 3.9.23 (The setup script installs this version if not present)
 - **Hardware**: All experiments can be run on CPU, but GPU with CUDA support is recommended for larger models and datasets
-- **Operating System**: Tested on macOS and Linux.
+- **Operating System**: Tested on macOS and debian-based Linux distributions (e.g., Ubuntu) with apt package manager.
 
 #### Dependencies and Installation
 The repository includes a `setup.sh` script that automates the environment setup, including creating a virtual environment and installing dependencies. 
@@ -60,12 +60,17 @@ The repository includes a `setup.sh` script that automates the environment setup
 ```
 
 2. Make setup script executable and run it:
+- It is possible to run the setup script installing python either system-wide and creating a virtual environment, or installing python via conda (using the ``--conda`` flag).
 ```bash
    chmod +x setup.sh
-   ./setup.sh
+   ./setup.sh --conda  # for conda installation
 ```
 
-3. Activate the virtual environment:
+3. Activate the conda environment:
+```bash
+   conda activate sprint
+```
+or the virtual environment:
 ```bash
    source sprint_env/bin/activate
 ```
@@ -75,7 +80,9 @@ The repository includes a `setup.sh` script that automates the environment setup
    export SPRINT_PATH=$(pwd)
 ```
 
-Alternatively, a **manual setup process** is provided below (for linux): 
+Alternatively, a **manual setup process** is provided below (for linux). First with system-wide python installation and virtual environment, and then with conda (replacing step 2 and 3).
+
+**Manual Setup Process with system-wide Python and Virtual Environment**
 
 2. Install python version 3.9 (e.g. in linux via apt)
 ```bash
@@ -107,12 +114,37 @@ This code may fail since latest os versions do not have python3.9 available in d
    - The expected path with the virtual environment is `sprint_env/lib/python3.9/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
    - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
 
-   
+6. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
+```bash
+   export SPRINT_PATH=$(pwd)
+```
+
+
+**Manual Setup Process with Conda**
+2. Install conda (if not already installed). You can use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for a minimal installation.
+
+3. Create and activate a conda environment with python 3.9:
+```bash
+   conda create -n sprint python=3.9
+   conda activate sprint
+```
+
+4. Install dependencies:
+```bash
+   SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True pip install -r requirements.txt
+```
+
+*NOTE: `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file (i.e., replacing `sklearn` with `scikit-learn`).*
+
+5. **Modify `autograd_grad_sample.py` in the `private_transformers library`**:
+   - The expected path with the virtual environment is `sprint_env/lib/python3.9/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
+   - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
 
 6. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
 ```bash
    export SPRINT_PATH=$(pwd)
 ```
+
 
 #### Setup Verification
 

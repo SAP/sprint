@@ -56,7 +56,7 @@ The repository is organized as follows:
 ## Requirements and Setup
 - **Python Version**: Tested with Python 3.9.23
 - **Hardware**: All experiments can be run on CPU, but GPU with CUDA support is recommended for larger models and datasets
-- **Operating System**: Tested on macOS and Linux.
+- **Operating System**: Tested on macOS and debian-based Linux distributions (e.g., Ubuntu) with apt package manager.
 
 ### Installation
 
@@ -67,12 +67,17 @@ The repository is organized as follows:
 ```
 
 2. Make setup script executable and run it:
+- It is possible to run the setup script installing python either system-wide and creating a virtual environment, or installing python via conda (using the ``--conda`` flag).
 ```bash
    chmod +x setup.sh
-   ./setup.sh
+   ./setup.sh --conda  # for conda installation (otherwise, omit the --conda flag)
 ```
 
-3. Activate the virtual environment:
+3. Activate the conda environment:
+```bash
+   conda activate sprint
+```
+or the virtual environment:
 ```bash
    source sprint_env/bin/activate
 ```
@@ -82,7 +87,7 @@ The repository is organized as follows:
    export SPRINT_PATH=$(pwd)
 ```
 
-#### Alternative Manual Setup
+#### Alternative Manual Setup (with system-wide python installation and virtual environment)
 After cloning the repository, you can follow the manual setup instructions below: 
 
 2. Install python version 3.9 (e.g. in linux via apt)
@@ -120,6 +125,33 @@ This code may fail since latest os versions do not have python3.9 available in d
 ```bash
    export SPRINT_PATH=$(pwd)
 ```
+
+
+#### Alternative Manual Setup (with conda)
+2. Install conda (if not already installed). You can use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for a minimal installation.
+
+3. Create and activate a conda environment with python 3.9:
+```bash
+   conda create -n sprint python=3.9
+   conda activate sprint
+```
+
+4. Install dependencies:
+```bash
+   SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True pip install -r requirements.txt
+```
+
+*NOTE: `SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True` since CrypTen requirements include sklearn. Alternatively, you can download CrypTen from source and modify the requirements file (i.e., replacing `sklearn` with `scikit-learn`).*
+
+5. **Modify `autograd_grad_sample.py` in the `private_transformers library`**:
+   - The expected path with the virtual environment is `sprint_env/lib/python3.9/site-packages/private_transformers/` (it may vary depending on the OS and python version). 
+   - You need to add `register_full_backward_hook` in line 97 of `autograd_grad_sample.py` (instead of `register_backward_hook`, which does not support layers with multiple autograd nodes like LoRALayers). The modified line changes from `handles.append(layer.register_backward_hook(this_backward))` to `handles.append(layer.register_full_backward_hook(this_backward))`.
+
+6. Set environment variable for sprint path (in the following, the command in run in the root of the cloned repo):
+```bash
+   export SPRINT_PATH=$(pwd)
+```
+
 
 ## Run DP Fine-tuning
 1. Download and tokenize the dataset (for example sst2):
