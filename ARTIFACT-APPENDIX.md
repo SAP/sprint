@@ -167,7 +167,7 @@ To verify that everything is set up correctly:
 ```
 This verifies the DP training pipeline is working correctly. The config file `$SPRINT_PATH/src/configs/fine-tuning_example_cpu.yaml` uses the CPU for fine-tuning. If you have a GPU with CUDA support, you can use the config file `$SPRINT_PATH/src/configs/fine-tuning_example_cuda.yaml`.
 
-*Note: the fine-tuning process may take some time, depending on the dataset size and model complexity.*
+*Expected runtime*: ~6 hours on NVIDIA A10G (g5.xlarge AWS instance) for RoBERTa-base on SST-2 dataset. For larger datasets (e.g., MNLI) the runtime can be more than 1 day. On CPU (e.g., c6.xlarge AWS instance) the runtime is ~2x longer.
 
 4. **Test Inference**: Run inference with CrypTen:
    
@@ -176,6 +176,10 @@ python run_inference.py --config inference_example.yaml --crypten_config crypten
 ```
 
 *Note: this examples works with a non fine-tuned roberta-base model. The model_name can be replaced with the name of a fine-tuned model.*
+
+*Expected runtime (MPC inference with CrypTen)*: ~15 minutes on NVIDIA A10G (g5.xlarge AWS instance) for RoBERTa-base on SST-2 dataset in MPC. Batched inference is ~2x faster than non-batched inference. On CPU (e.g., c6.xlarge AWS instance) the runtime is ~1.5x longer. 
+
+*Expected runtime (cleartext inference with PyTorch)*: ~1 minute on NVIDIA A10G (g5.xlarge AWS instance) for RoBERTa-base on SST-2 dataset. On CPU (e.g., c6.xlarge AWS instance) the runtime is ~2x longer.
 
 For more details, see the [README](README.md) in the repository.
 

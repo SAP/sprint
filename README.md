@@ -161,6 +161,7 @@ This code may fail since latest os versions do not have python3.9 available in d
 ```
 This will download the dataset and save it in the `data` folder. The tokenized dataset will be saved in `$SPRINT_PATH/data/tokenized_dataset/roberta/sst2/`.
 
+
 2. Configure the fine-tuning parameters in `$SPRINT_PATH/src/config/fine-tuning_example_cpu.yaml` (or create your own config file). 
 
 3. Run the fine-tuning script (using the absolute path to the config file):
@@ -171,6 +172,8 @@ This will download the dataset and save it in the `data` folder. The tokenized d
 The config file `$SPRINT_PATH/src/configs/fine-tuning_example_cpu.yaml` uses the CPU for fine-tuning. If you have a GPU with CUDA support, you can use the config file `$SPRINT_PATH/src/configs/fine-tuning_example_cuda.yaml` (or create your own config file). 
 
 The fine-tuned model will be saved in the `$SPRINT_PATH/data/models/` folder. The results (loss, validation accuracy) will be saved in the `$SPRINT_PATH/data/finetuning/` folder.
+
+*Expected runtime*: ~6 hours on NVIDIA A10G (g5.xlarge AWS instance) for RoBERTa-base on SST-2 dataset. For larger datasets (e.g., MNLI) the runtime can be more than 1 day. On CPU (e.g., c6.xlarge AWS instance) the runtime is ~2x longer.
 
 ## Run Inference
 The inference can run in cleartext or in MPC. The cleartext mode is used for local evaluation and debugging, while the MPC mode is used for secure inference. The MPC inference can be run locally on two different processes (to evaluate MPC accuracy) or on AWS with multiple machines (to evaluate the communication and overhead).
@@ -190,6 +193,10 @@ The config file `$SPRINT_PATH/src/configs/inference_example.yaml` contains the p
 
 In the inference config file, the `model_name` can be either a model saved after fine-tuning (in `$SPRINT_PATH/data/models/`) or a pre-trained model from the HuggingFace model hub (e.g. `roberta-base`). In the latter case, the model will be loaded from the model hub and used for inference without any fine-tuning, to test the runtime and communication overhead of the MPC inference.
 
+*Expected runtime (MPC inference with CrypTen)*: ~15 minutes on NVIDIA A10G (g5.xlarge AWS instance) for RoBERTa-base on SST-2 dataset in MPC. Batched inference is ~2x faster than non-batched inference. On CPU (e.g., c6.xlarge AWS instance) the runtime is ~1.5x longer.
+
+*Expected runtime (cleartext inference with PyTorch)*: ~1 minute on NVIDIA A10G (g5.xlarge AWS instance) for RoBERTa-base on SST-2 dataset. On CPU (e.g., c6.xlarge AWS instance) the runtime is ~2x longer.
+
 ## AWS evaluation for runtime and communication overhead
 The inference on different AWS machines can be run with the script in `$SPRINT_PATH/src/aws/` folder via:
 ```bash
@@ -200,6 +207,8 @@ cd $SPRINT_PATH/src/aws/
 This bash scripts runs on toy data. The script used for inference is the same as for local inference, with a different config files. For the example we use `$SPRINT_PATH/src/configs/aws_inference_config.yaml`.
 The data will be saved on the aws machine in the `aws-launcher-tmp` folder.
 The AWS machines need to be configured with the same environment as the local machine.
+
+*Expected runtime (MPC inference 2 parties)*: For RoBERTa-base, the expected runtime varies from 32 seconds in a LAN to 10 minutes in a WAN (e.g. Europe-US) on CPU (e.g. c6.xlarge AWS instance). GPU inference runtime varies from 20 seconds in a LAN to 10 minutes in a WAN (e.g. Europe-US) on NVIDIA A10G (on g5.xlarge AWS instance). Batched inference on GPU (with batch size equal to 32) is up to 1.7x faster than non-batched inference in a LAN and up to 1.9x faster in a WAN.
 
 
 ## Third-parties components
