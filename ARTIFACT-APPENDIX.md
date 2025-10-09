@@ -121,6 +121,7 @@ This code may fail since latest os versions do not have python3.9 available in d
 
 
 **Manual Setup Process with Conda**
+
 2. Install conda (if not already installed). You can use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for a minimal installation.
 
 3. Create and activate a conda environment with python 3.9:
