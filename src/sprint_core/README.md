@@ -10,9 +10,9 @@ Core components for SPRINT fine-tuning and inference.
 
 ```
 sprint_core/
-├── __init__.py                 # Package initialization
-├── constants.py               # Constants and defaults
-├── config_manager.py          # Config loading and validation
+├── __init__.py               # Package initialization
+├── constants.py              # Constants, path management and defaults
+├── config_manager.py         # Config loading and validation
 ├── data_loaders.py           # Data loading utilities
 ├── model_factory.py          # Model creation
 ├── training_manager.py       # Training execution

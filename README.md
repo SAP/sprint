@@ -6,7 +6,20 @@
 
 SPRINT is a scalable framework for differentially private (DP) fine-tuning and inference via multiparty computation (MPC) of transformer-based models. SPRINT is built on top of PyTorch, Opacus for DP fine-tuning and CrypTen for MPC inference.
 
-Repository for the paper "SPRINT: Scalable, Secure & Private Inference for Transformers"
+Repository for the paper "SPRINT: Scalable, Secure & Private Inference for Transformers". 
+
+If you find this code useful in your research, please cite our paper:
+```
+@inproceedings{capano2026sprint,
+  title     = {{SPRINT: Scalable Secure \& Differentially Private Inference for Transformers}},
+  author    = {Capano, Francesco and Böhler, Jonas and Weggenmann, Benjamin},
+  booktitle = {{Proceedings on Privacy Enhancing Technologies (PoPETs)}},
+  volume    = {2026},
+  issue     = {1},
+  year      = {2026}
+}
+```
+
 
 ## Abstract
 
@@ -24,8 +37,8 @@ We evaluate **SPRINT** on the GLUE benchmark with RoBERTa, achieving 1.6× faste
 ## Repository Structure
 The repository is organized as follows:
 - `src/`: Contains the source code for the project.
-  - `run_dp_finetuning.py`: Refactored script for fine-tuning models with differential privacy.
-  - `run_inference.py`: Refactored script for model inference (cleartext and MPC).
+  - `run_dp_finetuning.py`: Script for fine-tuning models with differential privacy.
+  - `run_inference.py`: Script for model inference (cleartext and MPC).
   - `sprint_core/`: Core modular components for SPRINT experiments.
     - `constants.py`: Constants and path management (Needs to be modified if custom paths are used).
     - `config_manager.py`: Configuration management and validation.
@@ -35,8 +48,14 @@ The repository is organized as follows:
     - `inference_manager.py`: Inference execution and overflow handling.
     - `experiment_runner.py`: End-to-end experiment orchestration.
     - `multiprocess_launcher.py`: Multi-process execution for MPC.
+    - `constants.py`: Constants and path management.
   - `configs/`: Contains YAML configuration files for different experimental settings.
     - `crypten_inference_config.yaml`: Configuration file for CrypTen.
+    - `aws_inference_config.yaml`: Example of configuration file for AWS inference experiments.
+      - `fine-tuning_example_cpu.yaml`: Example of configuration file for DP fine-tuning on CPU.
+      - `fine-tuning_example_cuda.yaml`: Example of configuration file for DP fine-tuning on GPU with CUDA.
+      - `inference_example.yaml`: Example of configuration file for inference (cleartext and MPC).
+  - `tokenize_dataset.py`: Script for downloading and tokenizing datasets.
   - `modeling/`: Contains the CrypTen modeling of BERT and RoBERTa.
     - `models/`: Model implementations (clear and encrypted versions).
     - `lora/`: LoRA (Low-Rank Adaptation) implementation and utilities.
@@ -51,6 +70,9 @@ The repository is organized as follows:
   - `inference/`: Contains the results of the MPC inference.
     - `accuracy/`: Inference accuracy results (for each dataset, encrypted and not-encrypted inference).
     - `runtime/`: Runtime and communication profiling results (from aws experiments)
+- `requirements.txt`: Python dependencies for the project.
+- `setup.sh`: Setup script for installing dependencies and setting up the environment.
+- `ARTIFACT_APPENDIX.md`: Documentation for artifact evaluation.
 
 
 ## Requirements and Setup
