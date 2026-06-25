@@ -6,7 +6,7 @@
 
 SPRINT is a scalable framework for differentially private (DP) fine-tuning and inference via multiparty computation (MPC) of transformer-based models. SPRINT is built on top of PyTorch, Opacus for DP fine-tuning and CrypTen for MPC inference.
 
-Repository for the paper ["SPRINT: Scalable, Secure & Private Inference for Transformers"](https://petsymposium.org/popets/2026/popets-2026-0008.pdf) accepted at [PoPETS 2026](https://petsymposium.org/2026/paperlist.php)
+Repository for the paper ["SPRINT: Scalable, Secure & Private Inference for Transformers"](https://petsymposium.org/popets/2026/popets-2026-0008.pdf) accepted at [PoPETS 2026](https://petsymposium.org/2026/paperlist.php).
 
 If you find this code useful in your research, please cite our paper:
 ```
